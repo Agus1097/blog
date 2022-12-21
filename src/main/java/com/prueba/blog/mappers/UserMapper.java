@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface UserMapper {
 
-    @Mapping(source = "password", target = "encryptedPassword")
+    @Mapping(target = "userId", expression = "java(java.util.UUID.randomUUID().toString())")
     User mapFromUserDTO(UserDTO userDTO);
 
     UserResponseDTO mapFromUser(User user);
