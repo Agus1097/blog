@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class UserExceptionHandler {
 
     @ExceptionHandler({
-        UserAlreadyExistsException.class
+            UserAlreadyExistsException.class
     })
     public @ResponseBody ResponseEntity<?> handleUserException(Exception ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
