@@ -7,36 +7,28 @@ import com.prueba.blog.mappers.UserMapper;
 import com.prueba.blog.models.UserModel;
 import com.prueba.blog.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-
 @Service
-public class UserService implements UserDetailsService {
+public class UserService {
 
     private UserRepository userRepository;
     private UserMapper userMapper;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     public UserService(UserRepository userRepository,
-                       UserMapper userMapper,
-                       BCryptPasswordEncoder bCryptPasswordEncoder) {
+                       UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Transactional
     public UserResponseDTO createUser(UserDTO userDTO) {
         UserModel user = userMapper.mapFromUserDTO(userDTO);
-        user.setEncryptedPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
+        user.setEncryptedPassword(passwordEncoder().encode(userDTO.getPassword()));
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new UserAlreadyExistsException(String.format("Ya existe un usuario con el mail: %s", user.getEmail()));
         }
@@ -44,12 +36,7 @@ public class UserService implements UserDetailsService {
         return userMapper.mapFromUser(user);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserModel userModel = userRepository.findByEmail(email);
-        if (!userRepository.existsByEmail(email)) {
-            throw new UsernameNotFoundException(email);
-        }
-        return new User(userModel.getEmail(), userModel.getEncryptedPassword(), new ArrayList<>());
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

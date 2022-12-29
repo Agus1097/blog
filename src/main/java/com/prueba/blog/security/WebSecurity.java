@@ -1,46 +1,58 @@
 package com.prueba.blog.security;
 
-import com.prueba.blog.services.UserService;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity
-public class WebSecurity extends WebSecurityConfigurerAdapter {
+public class WebSecurity {
 
-    private final UserService userService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserDetailsService userDetailsService;
+    private final JWTAuthorizationFilter jwtAuthorizationFilter;
 
-    public WebSecurity(UserService userService,
-                       BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.userService = userService;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    public WebSecurity(UserDetailsService userDetailsService, JWTAuthorizationFilter jwtAuthorizationFilter) {
+        this.userDetailsService = userDetailsService;
+        this.jwtAuthorizationFilter = jwtAuthorizationFilter;
     }
 
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf().disable().authorizeRequests()
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager autManager) throws Exception {
+
+        JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter();
+        jwtAuthenticationFilter.setAuthenticationManager(autManager);
+        jwtAuthenticationFilter.setFilterProcessesUrl("/users/login");
+
+        return http.csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .anyRequest().authenticated()
-                .and().addFilter(getAuthenticationFilter())
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .and().httpBasic()
+                .and().sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().addFilter(jwtAuthenticationFilter)
+                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder);
+    @Bean
+    AuthenticationManager authManager(HttpSecurity http) throws Exception {
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+                .userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder())
+                .and()
+                .build();
     }
 
-    public AuthenticationFilter getAuthenticationFilter() throws Exception {
-        final AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager());
-        authenticationFilter.setFilterProcessesUrl("/users/login");
-        return authenticationFilter;
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
