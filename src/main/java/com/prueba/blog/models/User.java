@@ -3,7 +3,9 @@ package com.prueba.blog.models;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+        indexes = {@Index(columnList = "user_id", name = "IDX_USERS_USER_ID", unique = true),
+                @Index(columnList = "email", name = "IDX_USERS_EMAIL", unique = true)})
 public class User {
 
     @Id

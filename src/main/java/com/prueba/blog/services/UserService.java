@@ -7,6 +7,8 @@ import com.prueba.blog.mappers.UserMapper;
 import com.prueba.blog.models.User;
 import com.prueba.blog.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,7 +40,9 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDTO getUser(String email) {
+    public UserResponseDTO getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getPrincipal().toString();
         User user = userRepository.findByEmail(email);
         if (!userRepository.existsByEmail(email)) {
             throw new UsernameNotFoundException(String.format("El usuario con email %s no existe", email));

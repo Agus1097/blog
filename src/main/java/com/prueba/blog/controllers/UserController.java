@@ -19,8 +19,8 @@ public class UserController {
     }
 
     @GetMapping
-    public String getUser() {
-        return "get user details";
+    public @ResponseBody ResponseEntity<UserResponseDTO> getUser() {
+        return ResponseEntity.ok(userService.getUser());
     }
 
     @PostMapping
