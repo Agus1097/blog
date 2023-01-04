@@ -1,6 +1,9 @@
 package com.prueba.blog.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prueba.blog.SpringApplicationContext;
+import com.prueba.blog.dtos.responses.UserResponseDTO;
+import com.prueba.blog.services.UserService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -43,6 +46,10 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         String token = TokenUtils.createToken(userDetails.getName(), userDetails.getUsername());
 
+        UserService userService = (UserService) SpringApplicationContext.getBean("userService");
+        UserResponseDTO userResponseDTO = userService.getUser(userDetails.getUsername());
+
+        response.addHeader("UserId", userResponseDTO.getUserId());
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
         response.getWriter().flush();
     }

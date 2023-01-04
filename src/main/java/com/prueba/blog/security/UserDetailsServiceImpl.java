@@ -1,6 +1,6 @@
 package com.prueba.blog.security;
 
-import com.prueba.blog.models.UserModel;
+import com.prueba.blog.models.User;
 import com.prueba.blog.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,10 +20,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserModel userModel = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
         if (!userRepository.existsByEmail(email)) {
             throw new UsernameNotFoundException(String.format("El usuario con email %s no existe", email));
         }
-        return new UserDetailsImpl(userModel);
+        return new UserDetailsImpl(user);
     }
 }

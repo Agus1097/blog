@@ -11,8 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.prueba.blog.security.SecurityConstants.EXPIRATION_DATE;
-import static com.prueba.blog.security.SecurityConstants.TOKEN_SECRET;
+import static com.prueba.blog.security.SecurityConstants.*;
 
 public class TokenUtils {
 
@@ -25,14 +24,14 @@ public class TokenUtils {
                 .setSubject(email)
                 .setExpiration(expirationDate)
                 .addClaims(extra)
-                .signWith(Keys.hmacShaKeyFor(TOKEN_SECRET.getBytes()))
+                .signWith(Keys.hmacShaKeyFor(getTokenSecret().getBytes()))
                 .compact();
     }
 
     public static UsernamePasswordAuthenticationToken getAuthentication(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(TOKEN_SECRET.getBytes())
+                    .setSigningKey(getTokenSecret().getBytes())
                     .build()
                     .parseClaimsJws(token)
                     .getBody();

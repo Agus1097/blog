@@ -1,6 +1,6 @@
 package com.prueba.blog.security;
 
-import com.prueba.blog.models.UserModel;
+import com.prueba.blog.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,10 +9,10 @@ import java.util.Collections;
 
 public class UserDetailsImpl implements UserDetails {
 
-    private final UserModel userModel;
+    private final User user;
 
-    public UserDetailsImpl(UserModel userModel) {
-        this.userModel = userModel;
+    public UserDetailsImpl(User user) {
+        this.user = user;
     }
 
     @Override
@@ -22,12 +22,12 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getPassword() {
-        return userModel.getEncryptedPassword();
+        return user.getEncryptedPassword();
     }
 
     @Override
     public String getUsername() {
-        return userModel.getEmail();
+        return user.getEmail();
     }
 
     @Override
@@ -51,6 +51,6 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     public String getName() {
-        return userModel.getFirstName() + " " + userModel.getLastName();
+        return user.getFirstName() + " " + user.getLastName();
     }
 }

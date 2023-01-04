@@ -4,9 +4,10 @@ import com.prueba.blog.dtos.requests.UserDTO;
 import com.prueba.blog.dtos.responses.UserResponseDTO;
 import com.prueba.blog.exceptions.entities.UserAlreadyExistsException;
 import com.prueba.blog.mappers.UserMapper;
-import com.prueba.blog.models.UserModel;
+import com.prueba.blog.models.User;
 import com.prueba.blog.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,12 +28,21 @@ public class UserService {
 
     @Transactional
     public UserResponseDTO createUser(UserDTO userDTO) {
-        UserModel user = userMapper.mapFromUserDTO(userDTO);
+        User user = userMapper.mapFromUserDTO(userDTO);
         user.setEncryptedPassword(passwordEncoder().encode(userDTO.getPassword()));
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new UserAlreadyExistsException(String.format("Ya existe un usuario con el mail: %s", user.getEmail()));
         }
         userRepository.save(user);
+        return userMapper.mapFromUser(user);
+    }
+
+    @Transactional
+    public UserResponseDTO getUser(String email) {
+        User user = userRepository.findByEmail(email);
+        if (!userRepository.existsByEmail(email)) {
+            throw new UsernameNotFoundException(String.format("El usuario con email %s no existe", email));
+        }
         return userMapper.mapFromUser(user);
     }
 
