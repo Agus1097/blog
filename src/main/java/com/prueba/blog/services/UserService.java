@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 public class UserService {
 
@@ -30,8 +32,8 @@ public class UserService {
 
     @Transactional
     public UserResponseDTO createUser(UserDTO userDTO) {
-        User user = userMapper.mapFromUserDTO(userDTO);
-        user.setEncryptedPassword(passwordEncoder().encode(userDTO.getPassword()));
+        User user = new User(UUID.randomUUID().toString(), userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
+                passwordEncoder().encode(userDTO.getPassword()));
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new UserAlreadyExistsException(String.format("Ya existe un usuario con el mail: %s", user.getEmail()));
         }
@@ -39,15 +41,24 @@ public class UserService {
         return userMapper.mapFromUser(user);
     }
 
-    @Transactional
-    public UserResponseDTO getUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getPrincipal().toString();
-        User user = userRepository.findByEmail(email);
+    @Transactional(readOnly = true)
+    public UserResponseDTO getUser(String email) {
+        User user = getUserByEmail(email);
+        return userMapper.mapFromUser(user);
+    }
+
+    @Transactional(readOnly = true)
+    public User getUserByEmail(String email) {
         if (!userRepository.existsByEmail(email)) {
             throw new UsernameNotFoundException(String.format("El usuario con email %s no existe", email));
         }
-        return userMapper.mapFromUser(user);
+        return userRepository.findByEmail(email);
+    }
+
+    @Transactional(readOnly = true)
+    public String getEmailByAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getPrincipal().toString();
     }
 
     PasswordEncoder passwordEncoder() {
