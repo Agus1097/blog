@@ -33,6 +33,8 @@ public class WebSecurity {
 
         return http.csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
+                .antMatchers(HttpMethod.GET, "/posts/public").permitAll()
+                .antMatchers(HttpMethod.GET, "/posts/{id}").permitAll()
                 .anyRequest().authenticated()
                 .and().httpBasic()
                 .and().sessionManagement()

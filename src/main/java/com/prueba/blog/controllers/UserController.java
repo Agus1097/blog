@@ -19,8 +19,8 @@ public class UserController {
     }
 
     @GetMapping
-    public @ResponseBody ResponseEntity<UserResponseDTO> getUser(@RequestParam String email) {
-        return ResponseEntity.ok(userService.getUser(email));
+    public @ResponseBody ResponseEntity<UserResponseDTO> getUser() {
+        return ResponseEntity.ok(userService.getUser());
     }
 
     @PostMapping

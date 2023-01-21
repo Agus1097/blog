@@ -16,6 +16,8 @@ public class PostResponseDTO {
 
     private Instant expirationDate;
 
+    private boolean expired;
+
     private UserResponseDTO user;
 
     private ExposureDTO exposure;
@@ -58,6 +60,14 @@ public class PostResponseDTO {
 
     public void setExpirationDate(Instant expirationDate) {
         this.expirationDate = expirationDate;
+    }
+
+    public boolean isExpired() {
+        return expired;
+    }
+
+    public void setExpired(boolean expired) {
+        this.expired = expired;
     }
 
     public UserResponseDTO getUser() {

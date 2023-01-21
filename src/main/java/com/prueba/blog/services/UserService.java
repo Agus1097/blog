@@ -2,6 +2,7 @@ package com.prueba.blog.services;
 
 import com.prueba.blog.dtos.requests.UserDTO;
 import com.prueba.blog.dtos.responses.UserResponseDTO;
+import com.prueba.blog.exceptions.entities.NotFoundAuthenticationException;
 import com.prueba.blog.exceptions.entities.UserAlreadyExistsException;
 import com.prueba.blog.mappers.UserMapper;
 import com.prueba.blog.models.User;
@@ -32,25 +33,35 @@ public class UserService {
 
     @Transactional
     public UserResponseDTO createUser(UserDTO userDTO) {
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
+            throw new UserAlreadyExistsException(String.format("Ya existe un usuario con el mail: %s", userDTO.getEmail()));
+        }
         User user = new User(UUID.randomUUID().toString(), userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
                 passwordEncoder().encode(userDTO.getPassword()));
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new UserAlreadyExistsException(String.format("Ya existe un usuario con el mail: %s", user.getEmail()));
-        }
         userRepository.save(user);
         return userMapper.mapFromUser(user);
     }
 
     @Transactional(readOnly = true)
-    public UserResponseDTO getUser(String email) {
-        User user = getUserByEmail(email);
+    public UserResponseDTO getUser() {
+        String email = getEmailByAuthentication();
+        return getUserByEmail(email);
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponseDTO getUserByEmail(String email) {
+        if (!userRepository.existsByEmail(email)) {
+            throw new UsernameNotFoundException(String.format("No existe el usuario con email %s", email));
+        }
+        User user = userRepository.findByEmail(email);
         return userMapper.mapFromUser(user);
     }
 
     @Transactional(readOnly = true)
-    public User getUserByEmail(String email) {
+    public User getUserByAuthentication() {
+        String email = getEmailByAuthentication();
         if (!userRepository.existsByEmail(email)) {
-            throw new UsernameNotFoundException(String.format("El usuario con email %s no existe", email));
+            throw new UsernameNotFoundException(String.format("No existe el usuario con email %s", email));
         }
         return userRepository.findByEmail(email);
     }
