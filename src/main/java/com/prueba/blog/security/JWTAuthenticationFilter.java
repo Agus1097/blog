@@ -49,6 +49,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         UserService userService = (UserService) SpringApplicationContext.getBean("userService");
         UserResponseDTO userResponseDTO = userService.getUserByEmail(userDetails.getUsername());
 
+        response.addHeader("Access-Control-Expose-Headers", "Authorization, UserId");
         response.addHeader("UserId", userResponseDTO.getUserId());
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
         response.getWriter().flush();

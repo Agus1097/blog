@@ -31,7 +31,7 @@ public class WebSecurity {
         jwtAuthenticationFilter.setAuthenticationManager(autManager);
         jwtAuthenticationFilter.setFilterProcessesUrl("/users/login");
 
-        return http.csrf().disable().authorizeRequests()
+        return http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .antMatchers(HttpMethod.GET, "/posts/public").permitAll()
                 .antMatchers(HttpMethod.GET, "/posts/{id}").permitAll()

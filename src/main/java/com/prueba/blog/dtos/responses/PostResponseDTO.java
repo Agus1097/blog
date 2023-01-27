@@ -1,19 +1,23 @@
 package com.prueba.blog.dtos.responses;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.prueba.blog.dtos.requests.ExposureDTO;
 
 import java.time.Instant;
 
 public class PostResponseDTO {
 
+    @JsonProperty("post_id")
     private String postId;
 
     private String title;
 
     private String content;
 
+    @JsonProperty("created_at")
     private Instant createdAt;
 
+    @JsonProperty("expiration_date")
     private Instant expirationDate;
 
     private boolean expired;

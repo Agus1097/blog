@@ -34,7 +34,7 @@ public class UserService {
     @Transactional
     public UserResponseDTO createUser(UserDTO userDTO) {
         if (userRepository.existsByEmail(userDTO.getEmail())) {
-            throw new UserAlreadyExistsException(String.format("Ya existe un usuario con el mail: %s", userDTO.getEmail()));
+            throw new UserAlreadyExistsException(String.format("Ya existe un usuario con mail: %s", userDTO.getEmail()));
         }
         User user = new User(UUID.randomUUID().toString(), userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
                 passwordEncoder().encode(userDTO.getPassword()));

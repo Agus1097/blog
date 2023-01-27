@@ -1,6 +1,7 @@
 package com.prueba.blog.dtos.requests;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PostDTO {
@@ -9,8 +10,10 @@ public class PostDTO {
 
     private String content;
 
+    @JsonProperty("expiration_date")
     private int expirationDate;
 
+    @JsonProperty("exposure_id")
     private Long exposureId;
 
     public String getTitle() {

@@ -1,10 +1,17 @@
 package com.prueba.blog.dtos.responses;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class UserResponseDTO {
 
     private String userId;
+
+    @JsonProperty("first_name")
     private String firstName;
+
+    @JsonProperty("last_name")
     private String lastName;
+
     private String email;
 
     public String getUserId() {
