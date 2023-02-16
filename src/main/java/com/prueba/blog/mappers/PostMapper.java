@@ -19,7 +19,7 @@ public interface PostMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "postId", expression = "java(java.util.UUID.randomUUID().toString())")
-    @Mapping(target = "expirationDate", expression = "java(java.time.Instant.now().plusMillis(postDTO.getExpirationDate() * 3600000L))")
+    @Mapping(target = "expirationDate", expression = "java(java.time.Instant.now().plusMillis(postDTO.getExpirationTime() * 3600000L))")
     Post mapFromPostDTO(PostDTO postDTO, Exposure exposure, User user);
 
     @Mapping(target = "expired", expression = "java(java.time.Instant.now().isAfter(post.getExpirationDate()))")

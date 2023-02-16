@@ -10,8 +10,8 @@ public class PostDTO {
 
     private String content;
 
-    @JsonProperty("expiration_date")
-    private int expirationDate;
+    @JsonProperty("expiration_time")
+    private int expirationTime;
 
     @JsonProperty("exposure_id")
     private Long exposureId;
@@ -32,12 +32,12 @@ public class PostDTO {
         this.content = content;
     }
 
-    public int getExpirationDate() {
-        return expirationDate;
+    public int getExpirationTime() {
+        return expirationTime;
     }
 
-    public void setExpirationDate(int expirationDate) {
-        this.expirationDate = expirationDate;
+    public void setExpirationTime(int expirationTime) {
+        this.expirationTime = expirationTime;
     }
 
     public Long getExposureId() {

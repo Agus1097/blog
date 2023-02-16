@@ -100,7 +100,7 @@ public class PostService {
         Exposure exposure = exposureService.getById(postDTO.getExposureId());
         post.setTitle(postDTO.getTitle());
         post.setContent(postDTO.getContent());
-        post.setExpirationDate(Instant.now().plusMillis(postDTO.getExpirationDate() * 3600000L));
+        post.setExpirationDate(Instant.now().plusMillis(postDTO.getExpirationTime() * 3600000L)); //in hours
         post.setExposure(exposure);
         postRepository.save(post);
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UserResponseDTO {
 
+    @JsonProperty("user_id")
     private String userId;
 
     @JsonProperty("first_name")
