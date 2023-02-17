@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,7 +22,7 @@ public class PostController {
     }
 
     @PostMapping
-    public @ResponseBody ResponseEntity<PostResponseDTO> createPost(@RequestBody PostDTO postDTO) {
+    public @ResponseBody ResponseEntity<PostResponseDTO> createPost(@RequestBody @Valid PostDTO postDTO) {
         return ResponseEntity.ok(postService.createPost(postDTO));
     }
 

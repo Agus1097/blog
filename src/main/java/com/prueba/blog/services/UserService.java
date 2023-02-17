@@ -2,7 +2,6 @@ package com.prueba.blog.services;
 
 import com.prueba.blog.dtos.requests.UserDTO;
 import com.prueba.blog.dtos.responses.UserResponseDTO;
-import com.prueba.blog.exceptions.entities.NotFoundAuthenticationException;
 import com.prueba.blog.exceptions.entities.UserAlreadyExistsException;
 import com.prueba.blog.mappers.UserMapper;
 import com.prueba.blog.models.User;

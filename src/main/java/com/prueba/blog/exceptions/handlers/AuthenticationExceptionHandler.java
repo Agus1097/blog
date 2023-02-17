@@ -1,8 +1,6 @@
 package com.prueba.blog.exceptions.handlers;
 
-import com.prueba.blog.exceptions.entities.IllegalUserException;
 import com.prueba.blog.exceptions.entities.NotFoundAuthenticationException;
-import com.prueba.blog.exceptions.entities.UserAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
